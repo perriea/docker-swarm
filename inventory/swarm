@@ -1,0 +1,15 @@
+[manager-swarm:children]
+node01
+
+[node-swarm:children]
+node02
+node03
+
+[node01]
+172.16.231.6 ansible_connection=ssh ansible_ssh_user=perrie_a
+
+[node02]
+172.16.231.18 ansible_connection=ssh ansible_ssh_user=perrie_a
+
+[node03]
+172.16.231.29 ansible_connection=ssh ansible_ssh_user=perrie_a
