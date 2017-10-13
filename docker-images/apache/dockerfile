@@ -1,0 +1,22 @@
+FROM alpine:3.6
+
+LABEL maintainer="Aurelien PERRIER <perrie_a@etna-alternance.net>" \
+        name="mysql" \
+        location="Paris" \
+        version="09-10-2017"
+
+ENV TIMEZONE Europe/Paris
+
+RUN apk --update add apache2 && \ 
+        mkdir -p /run/apache2 && \
+        rm -rf /var/cache/apk/* 
+
+RUN mkdir /app && mkdir /app/public && chown -R apache:apache /app && chmod -R 755 /app && mkdir bootstrap
+ADD start.sh /bootstrap/
+RUN chmod +x /bootstrap/start.sh
+
+VOLUME ["/var/www/localhost/htdocs"]
+
+EXPOSE 80 443
+
+ENTRYPOINT ["/bootstrap/start.sh"]
