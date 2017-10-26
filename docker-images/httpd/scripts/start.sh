@@ -7,22 +7,22 @@ if [ "$CONTAINER_TIMEZONE" ]; then
 	echo "Container timezone set to: $CONTAINER_TIMEZONE"
 fi
 
-# Force immediate synchronisation of the time and start the time-synchronization service.
-# In order to be able to use ntpd in the container, it must be run with the SYS_TIME capability.
-# In addition you may want to add the SYS_NICE capability, in order for ntpd to be able to modify its priority.
-ntpd -s
+# ntpd -s
 
 # Apache server name change
 if [ ! -z "$APACHE_SERVER_NAME" ]
 	then
-		sed -i "s/#ServerName www.example.com:80/ServerName $APACHE_SERVER_NAME/" /etc/apache2/httpd.conf
+		sed -i "s/#ServerName www.example.com:80/ServerName $APACHE_SERVER_NAME:80/" /etc/apache2/httpd.conf
 		echo "Changed server name to '$APACHE_SERVER_NAME'..."
 	else
 		echo "NOTICE: Change 'ServerName' globally and hide server message by setting environment variable >> 'SERVER_NAME=your.server.name' in docker command or docker-compose file"
 fi
 
-# Start (ensure apache2 PID not left behind first) to stop auto start crashes if didn't shut down properly
+# echo "Active PHP modules for HTTPD ..."
+# rm /var/www/localhost/htdocs/index.html
+# sed -i 's/DocumentRoot "/var/www/localhost/htdocs"/DocumentRoot "/var/www/localhost/htdocs/wordpress"' /etc/apache2/httpd.conf
 
+# Start (ensure apache2 PID not left behind first) to stop auto start crashes if didn't shut down properly
 echo "Clearing any old processes..."
 rm -f /run/apache2/apache2.pid
 rm -f /run/apache2/httpd.pid

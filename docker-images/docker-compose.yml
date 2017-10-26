@@ -1,42 +1,65 @@
 version: '3'
 
-volumes:
-  db_data:
-  wordpress:
-
 services:
-  db:
+  mysql:
     build: ./mysql
+    env_file:
+      - ./mysql/.env
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+      placement:
+        constraints: [node.role == node01]
     volumes:
       - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-
-  apache:
-    build: ./apache
-    depends_on:
-      - db
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    volumes:
-      - wordpress:/srv/app
     ports:
-      - "80:80"
-    restart: always
+      - "3306:3306"
 
   wordpress:
     build: ./wordpress
+    env_file:
+      - ./wordpress/.env
     volumes:
-      - wordpress:/srv/app
-    environment:
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
+      - wordpress_data:/srv/app/wordpress
+
+  apache:
+    build: ./httpd
+    env_file:
+      - ./httpd/.env
+    depends_on:
+      - mysql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+      placement:
+        constraints: [node.role == node02]
+    volumes:
+      - wordpress_data:/var/www/localhost/htdocs
+    ports:
+      - "80:80"
+
+volumes:
+  db_data: {}
+  wordpress_data: {}

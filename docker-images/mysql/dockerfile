@@ -1,20 +1,21 @@
 FROM alpine:3.6
 
-LABEL maintainer="Aurelien PERRIER"
-LABEL name="mysql"
-LABEL location="Paris"
+LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
-RUN apk update && \
-	apk add mysql mysql-client && \
-	addgroup mysql mysql && \
-	mkdir /scripts && \
-	rm -rf /var/cache/apk/*
+# Installing MySQL packages (MariaDB on alpine)
+RUN apk --update add --no-cache mysql mysql-client && \
+	addgroup mysql mysql
 
-VOLUME ["/var/lib/mysql"]
+# Work path
+WORKDIR /scripts
 
-COPY ./scripts/startup.sh /scripts/startup.sh
-RUN chmod +x /scripts/startup.sh
+# Copy of the MySQL startup script
+COPY ./scripts/start.sh ./start.sh
+RUN chmod +x ./start.sh
+
+# Creating the persistent volume
+VOLUME [ "/var/lib/mysql" ]
 
 EXPOSE 3306
 
-ENTRYPOINT ["./scripts/startup.sh"]
+ENTRYPOINT [ "./start.sh" ]
