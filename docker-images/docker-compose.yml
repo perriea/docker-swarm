@@ -1,34 +1,42 @@
 version: '3'
 
+volumes:
+  db_data:
+  wordpress:
+
 services:
   db:
     build: ./mysql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     volumes:
       - db_data:/var/lib/mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
-    
 
   apache:
     build: ./apache
+    depends_on:
+      - db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - wordpress:/srv/app
     ports:
-      - "8000:80"
+      - "80:80"
     restart: always
 
   wordpress:
-    depends_on:
-      - db
-    image: wordpress:latest
-    ports:
-      - "8000:80"
-     restart: always
+    build: ./wordpress
+    volumes:
+      - wordpress:/srv/app
     environment:
-      WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
-volumes:
-  db_data:
