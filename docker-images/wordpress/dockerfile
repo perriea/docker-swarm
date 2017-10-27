@@ -4,6 +4,12 @@ LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
 ENV VERSION_WORDPRESS 4.8.2
 
+# TMP
+# ENV MYSQL_USER wordpress
+# ENV MYSQL_USER_PWD CJEdTMGTc6{C6pLMkjE]
+# ENV MYSQL_USER_DB wordpress
+# ENV MYSQL_HOST mysql
+
 # Minimum package installation
 RUN apk --update add --no-cache wget unzip
 
@@ -18,6 +24,9 @@ RUN unzip /srv/app/wordpress-${VERSION_WORDPRESS}.zip -d /srv/app/ && \
 
 # Copy of the WordPress configuration file
 COPY ./files/wp-config.php /srv/app/wordpress
+COPY ./scripts/update.sh /root/update.sh
 
 # Creation of the volume, the code is in
 VOLUME ["/srv/app/wordpress"]
+
+ENTRYPOINT [ "sh", "/root/update.sh" ]
