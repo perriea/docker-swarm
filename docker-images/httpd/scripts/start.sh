@@ -18,10 +18,6 @@ if [ ! -z "$APACHE_SERVER_NAME" ]
 		echo "NOTICE: Change 'ServerName' globally and hide server message by setting environment variable >> 'SERVER_NAME=your.server.name' in docker command or docker-compose file"
 fi
 
-# echo "Active PHP modules for HTTPD ..."
-# rm /var/www/localhost/htdocs/index.html
-# sed -i 's/DocumentRoot "/var/www/localhost/htdocs"/DocumentRoot "/var/www/localhost/htdocs/wordpress"' /etc/apache2/httpd.conf
-
 # Start (ensure apache2 PID not left behind first) to stop auto start crashes if didn't shut down properly
 echo "Clearing any old processes..."
 rm -f /run/apache2/apache2.pid
