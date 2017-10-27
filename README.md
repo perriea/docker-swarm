@@ -2,5 +2,13 @@
 
 ## Docker
 
-Impossible de lire les variable d'environnement en PHP :(
-Fichier Wordpress change a la main mais ca fonctionne !
+Fonctionne totalement !   
+   
+Demarrer le compose :   
+`docker-compose up -d`
+
+Mettre off l'infra :   
+`docker-compose down`
+
+Supprimer tous les volumes Docker :   
+`docker volume rm `docker volume ls -q -f dangling=true`
