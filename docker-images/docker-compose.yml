@@ -35,8 +35,6 @@ services:
 
   apache:
     build: ./httpd
-    env_file:
-      - ./httpd/.env
     depends_on:
       - mysql
     deploy:
