@@ -1,6 +1,43 @@
 version: '3'
 
 services:
+  wordpress:
+    build: ./wordpress
+    env_file:
+      - ./wordpress/.env
+    volumes:
+      - wordpress_data:/srv/app/wordpress
+
+  telegraf:
+    build: ./telegraf
+    env_file:
+      - ./telegraf/.env
+    volumes:
+      - telegraf_data:/srv/app/telegraf
+  
+  influxdb:
+    build: ./influxdb
+    env_file:
+      - ./influxdb/.env
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+      - telegraf_data:/root/telegraf
+    ports:
+      - "8125:8125/udp"
+      - "8092:8092/udp"
+      - "8086:8086"
+      - "8083:8083"
+
+  grafana:
+    build: ./grafana
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana_data:/grafana
+      - telegraf_data:/root/telegraf
+    ports:
+      - "3000:3000"
+
   mysql:
     build: ./mysql
     env_file:
@@ -23,17 +60,11 @@ services:
         constraints: [node.role == node01]
     volumes:
       - db_data:/var/lib/mysql
+      - telegraf_data:/root/telegraf
     ports:
       - "3306:3306"
 
-  wordpress:
-    build: ./wordpress
-    env_file:
-      - ./wordpress/.env
-    volumes:
-      - wordpress_data:/srv/app/wordpress
-
-  apache:
+  httpd:
     build: ./httpd
     depends_on:
       - mysql
@@ -55,9 +86,13 @@ services:
         constraints: [node.role == node02]
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
+      - telegraf_data:/root/telegraf
     ports:
       - "80:80"
 
 volumes:
   db_data: {}
   wordpress_data: {}
+  telegraf_data: {}
+  influxdb_data: {}
+  grafana_data: {}
