@@ -1,3 +1,4 @@
+# For Swarm testing
 version: '3'
 
 services:
@@ -31,13 +32,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 500M
+          cpus: '0.25'
+          memory: 512M
         reservations:
-          cpus: '10.000'
-          memory: 500M
+          cpus: '0.25'
+          memory: 256M
       placement:
-        constraints: [node.role == node02]
+        constraints: [node.type == logs]
     volumes:
       - influxdb_data:/var/lib/influxdb
       - telegraf_data:/root/telegraf
@@ -61,13 +62,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.25'
+          memory: 512M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.25'
+          memory: 256M
       placement:
-        constraints: [node.role == manager]
+        constraints: [node.type == logs]
     volumes:
       - grafana_data:/grafana
       - telegraf_data:/root/telegraf
@@ -88,13 +89,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.8'
+          memory: 1024M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.8'
+          memory: 512M
       placement:
-        constraints: [node.role == node01]
+        constraints: [node.type == mysql]
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
@@ -115,13 +116,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.6'
+          memory: 1024M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.6'
+          memory: 512M
       placement:
-        constraints: [node.role == node02]
+        constraints: [node.type == httpd]
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf
