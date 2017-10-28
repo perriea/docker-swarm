@@ -2,7 +2,7 @@ version: '3'
 
 services:
   wordpress:
-    build: ./wordpress
+    image: dockerimages_wordpress:latest
     container_name: wordpress
     env_file:
       - ./wordpress/.env
@@ -10,7 +10,7 @@ services:
       - wordpress_data:/srv/app/wordpress
 
   telegraf:
-    build: ./telegraf
+    image: dockerimages_telegraf:latest
     container_name: telegraf
     env_file:
       - ./telegraf/.env
@@ -18,7 +18,7 @@ services:
       - telegraf_data:/srv/app/telegraf
   
   influxdb:
-    build: ./influxdb
+    image: dockerimages_influxdb:latest
     container_name: influxdb
     env_file:
       - ./influxdb/.env
@@ -48,7 +48,7 @@ services:
       - "8083:8083"
 
   grafana:
-    build: ./grafana
+    image: dockerimages_grafana:latest
     container_name: grafana
     depends_on:
       - influxdb
@@ -75,7 +75,7 @@ services:
       - "3000:3000"
 
   mysql:
-    build: ./mysql
+    image: dockerimages_mysql:latest
     container_name: mysql
     env_file:
       - ./mysql/.env
@@ -102,7 +102,7 @@ services:
       - "3306:3306"
 
   httpd:
-    build: ./httpd
+    image: dockerimages_httpd:latest
     container_name: httpd
     depends_on:
       - mysql
