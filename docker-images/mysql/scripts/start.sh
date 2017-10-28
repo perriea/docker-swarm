@@ -71,5 +71,5 @@ fi
 echo "[i] Sleeping 5 sec"
 sleep 5
 
-echo '[i] start running mysqld'
-exec /usr/bin/mysqld --user=mysql --console
+echo "Starting all process"
+exec supervisord --nodaemon --configuration /root/config/supervisord.conf
