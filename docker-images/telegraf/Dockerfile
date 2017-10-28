@@ -3,7 +3,7 @@ FROM alpine:3.6
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
 ENV TELEGRAF_VERSION 1.4.3
-# ENV INFLUXDB_HOST influxdb
+ENV INFLUXDB_HOST influxdb
 
 RUN apk --update add --no-cache iputils ca-certificates && update-ca-certificates
 RUN apk add --no-cache --virtual .build-deps wget gnupg tar

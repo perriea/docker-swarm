@@ -3,6 +3,7 @@ version: '3'
 services:
   wordpress:
     build: ./wordpress
+    container_name: wordpress
     env_file:
       - ./wordpress/.env
     volumes:
@@ -10,6 +11,7 @@ services:
 
   telegraf:
     build: ./telegraf
+    container_name: telegraf
     env_file:
       - ./telegraf/.env
     volumes:
@@ -17,6 +19,7 @@ services:
   
   influxdb:
     build: ./influxdb
+    container_name: influxdb
     env_file:
       - ./influxdb/.env
     volumes:
@@ -30,6 +33,7 @@ services:
 
   grafana:
     build: ./grafana
+    container_name: grafana
     depends_on:
       - influxdb
     volumes:
@@ -40,6 +44,7 @@ services:
 
   mysql:
     build: ./mysql
+    container_name: mysql
     env_file:
       - ./mysql/.env
     deploy:
@@ -66,6 +71,7 @@ services:
 
   httpd:
     build: ./httpd
+    container_name: httpd
     depends_on:
       - mysql
     deploy:
