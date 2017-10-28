@@ -23,5 +23,5 @@ echo "Clearing any old processes..."
 rm -f /run/apache2/apache2.pid
 rm -f /run/apache2/httpd.pid
 
-echo "Starting apache..."
-httpd -D FOREGROUND
+echo "Starting all process"
+exec supervisord --nodaemon --configuration /root/config/supervisord.conf

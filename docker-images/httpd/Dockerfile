@@ -16,7 +16,8 @@ RUN apk --update add --no-cache apache2 \
         php7-session \
         php7-mysqli \
         php7-zlib \
-        mysql-client
+        mysql-client \
+        supervisor
 
 RUN mkdir -p /run/apache2
 
@@ -26,6 +27,8 @@ WORKDIR /scripts
 # Copy of the HTTPD startup script
 COPY ./scripts/start.sh ./start.sh
 RUN chmod +x ./start.sh
+
+COPY ./files/supervisord.conf /root/config/supervisord.conf
 
 EXPOSE 80
 
