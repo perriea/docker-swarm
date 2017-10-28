@@ -7,6 +7,9 @@ services:
     container_name: wordpress
     env_file:
       - ./wordpress/.env
+    deploy:
+      placement:
+        constraints: [node.type == httpd]
     volumes:
       - wordpress_data:/srv/app/wordpress
 
@@ -15,6 +18,9 @@ services:
     container_name: telegraf
     env_file:
       - ./telegraf/.env
+    deploy:
+      placement:
+        constraints: [node.type == logs]
     volumes:
       - telegraf_data:/srv/app/telegraf
   
