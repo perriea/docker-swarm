@@ -1,0 +1,136 @@
+version: '3'
+
+services:
+  wordpress:
+    build: ./wordpress
+    container_name: wordpress
+    env_file:
+      - ./wordpress/.env
+    volumes:
+      - wordpress_data:/srv/app/wordpress
+
+  telegraf:
+    build: ./telegraf
+    container_name: telegraf
+    env_file:
+      - ./telegraf/.env
+    volumes:
+      - telegraf_data:/srv/app/telegraf
+  
+  influxdb:
+    build: ./influxdb
+    container_name: influxdb
+    env_file:
+      - ./influxdb/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 500M
+        reservations:
+          cpus: '10.000'
+          memory: 500M
+      placement:
+        constraints: [node.role == node02]
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+      - telegraf_data:/root/telegraf
+    ports:
+      - "8125:8125/udp"
+      - "8092:8092/udp"
+      - "8086:8086"
+      - "8083:8083"
+
+  grafana:
+    build: ./grafana
+    container_name: grafana
+    depends_on:
+      - influxdb
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - grafana_data:/grafana
+      - telegraf_data:/root/telegraf
+    ports:
+      - "3000:3000"
+
+  mysql:
+    build: ./mysql
+    container_name: mysql
+    env_file:
+      - ./mysql/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+      placement:
+        constraints: [node.role == node01]
+    volumes:
+      - db_data:/var/lib/mysql
+      - telegraf_data:/root/telegraf
+    ports:
+      - "3306:3306"
+
+  httpd:
+    build: ./httpd
+    container_name: httpd
+    depends_on:
+      - mysql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+      placement:
+        constraints: [node.role == node02]
+    volumes:
+      - wordpress_data:/var/www/localhost/htdocs
+      - telegraf_data:/root/telegraf
+    ports:
+      - "80:80"
+
+volumes:
+  db_data: {}
+  wordpress_data: {}
+  telegraf_data: {}
+  influxdb_data: {}
+  grafana_data: {}
