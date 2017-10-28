@@ -18,9 +18,6 @@ services:
     container_name: telegraf
     env_file:
       - ./telegraf/.env
-    deploy:
-      placement:
-        constraints: [node.type == logs]
     volumes:
       - telegraf_data:/srv/app/telegraf
   
