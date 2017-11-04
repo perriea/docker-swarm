@@ -1,22 +1,19 @@
+# For Swarm testing
 version: '3'
 
 services:
-  registry:
-    image: registry:2
-    hostname: registry
-    ports:
-      - "5000:5000"
-
   wordpress:
-    build: ./wordpress
-    container_name: wordpress
+    image: 172.16.231.6:5000/wordpress:latest
     env_file:
       - ./wordpress/.env
+    deploy:
+      placement:
+        constraints: [node.type == httpd]
     volumes:
       - wordpress_data:/srv/app/wordpress
 
   telegraf:
-    build: ./telegraf
+    image: 172.16.231.6:5000/telegraf:latest
     container_name: telegraf
     env_file:
       - ./telegraf/.env
@@ -24,8 +21,7 @@ services:
       - telegraf_data:/srv/app/telegraf
   
   influxdb:
-    build: ./influxdb
-    hostname: influxdb
+    image: 172.16.231.6:5000/influxdb:latest
     env_file:
       - ./influxdb/.env
     deploy:
@@ -37,11 +33,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 500M
+          cpus: '0.25'
+          memory: 512M
         reservations:
-          cpus: '10.000'
-          memory: 500M
+          cpus: '0.25'
+          memory: 256M
+      placement:
+        constraints: [node.type == logs]
     volumes:
       - influxdb_data:/var/lib/influxdb
       - telegraf_data:/root/telegraf
@@ -52,8 +50,7 @@ services:
       - "8083:8083"
 
   grafana:
-    build: ./grafana
-    hostname: grafana
+    image: 172.16.231.6:5000/grafana:latest
     depends_on:
       - influxdb
     deploy:
@@ -65,11 +62,13 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.25'
+          memory: 512M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.25'
+          memory: 256M
+      placement:
+        constraints: [node.type == logs]
     volumes:
       - grafana_data:/grafana
       - telegraf_data:/root/telegraf
@@ -77,8 +76,7 @@ services:
       - "3000:3000"
 
   mysql:
-    build: ./mysql
-    hostname: mysql
+    image: 172.16.231.6:5000/mysql:latest
     env_file:
       - ./mysql/.env
     deploy:
@@ -90,25 +88,21 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.8'
+          memory: 1024M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.8'
+          memory: 512M
+      placement:
+        constraints: [node.type == mysql]
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
     ports:
       - "3306:3306"
 
   httpd:
-    build: ./httpd
-    hostname: httpd
+    image: 172.16.231.6:5000/httpd:latest
     depends_on:
       - mysql
     deploy:
@@ -120,19 +114,16 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '10.000'
-          memory: 250M
+          cpus: '0.6'
+          memory: 1024M
         reservations:
-          cpus: '10.000'
-          memory: 220M
+          cpus: '0.6'
+          memory: 512M
+      placement:
+        constraints: [node.type == httpd]
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
     ports:
       - "80:80"
 

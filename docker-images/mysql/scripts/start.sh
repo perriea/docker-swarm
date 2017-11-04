@@ -38,7 +38,7 @@ USE mysql;
 FLUSH PRIVILEGES;
 DELETE FROM mysql.user;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PWD' WITH GRANT OPTION;
+GRANT SELECT, SHOW VIEW, PROCESS, REPLICATION CLIENT ON *.* TO 'telegraf'@'localhost' IDENTIFIED BY 'telegraf2017' WITH GRANT OPTION;
 EOF
 
 
@@ -71,5 +71,5 @@ fi
 echo "[i] Sleeping 5 sec"
 sleep 5
 
-echo '[i] start running mysqld'
-exec /usr/bin/mysqld --user=mysql --console
+echo "Starting all process"
+exec supervisord --nodaemon --configuration /root/config/supervisord.conf

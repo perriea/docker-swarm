@@ -2,13 +2,7 @@ FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
-ENV VERSION_WORDPRESS 4.8.2
-
-# TMP
-# ENV MYSQL_USER wordpress
-# ENV MYSQL_USER_PWD CJEdTMGTc6{C6pLMkjE]
-# ENV MYSQL_USER_DB wordpress
-# ENV MYSQL_HOST mysql
+ENV VERSION_WORDPRESS 4.8.3
 
 # Minimum package installation
 RUN apk --update add --no-cache wget unzip
