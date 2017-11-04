@@ -29,6 +29,9 @@ COPY ./scripts/start.sh ./start.sh
 RUN chmod +x ./start.sh
 
 COPY ./files/supervisord.conf /root/config/supervisord.conf
+COPY ./files/telegraf.conf /root/config/telegraf.conf
+
+VOLUME [ "/var/log/httpd" ]
 
 EXPOSE 80
 
