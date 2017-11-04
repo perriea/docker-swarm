@@ -21,7 +21,6 @@ RUN mkdir -p /srv/app && \
         rm -rf *.tar.gz* /root/.gnupg && \
         apk del .build-deps
 
-COPY ./files/* /srv/app/telegraf/
 RUN mkdir -p /srv/app/telegraf/telegraf.d
 
 VOLUME ["/srv/app/"]
