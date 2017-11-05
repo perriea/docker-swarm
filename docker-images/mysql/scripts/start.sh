@@ -68,6 +68,10 @@ EOF
 	rm -f $tfile
 fi
 
+echo "Changing values in fluentd ..."
+sed -i "s/aws_key_id AZERTY/aws_key_id $MINIO_ACCESS_KEY/" /root/config/fluentd.conf
+sed -i "s/aws_sec_key AZERTY/aws_sec_key $MINIO_SECRET_KEY/" /root/config/fluentd.conf
+
 echo "[i] Sleeping 5 sec"
 sleep 5
 
