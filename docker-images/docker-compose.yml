@@ -1,9 +1,33 @@
 version: '3'
 
 services:
+  minio:
+    build: ./minio
+    hostname: minio
+    env_file:
+      - ./minio/.env
+    volumes:
+      - minio_data:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '5.000'
+          memory: 100M
+        reservations:
+          cpus: '5.000'
+          memory: 50M
+    ports:
+      - "9000:9000"
+
   wordpress:
     build: ./wordpress
-    container_name: wordpress
+    hostname: wordpress
     env_file:
       - ./wordpress/.env
     volumes:
@@ -11,7 +35,7 @@ services:
 
   telegraf:
     build: ./telegraf
-    container_name: telegraf
+    hostname: telegraf
     env_file:
       - ./telegraf/.env
     volumes:
@@ -72,6 +96,8 @@ services:
   chronograf:
     build: ./chronograf
     hostname: chronograf
+    env_file:
+      - ./chronograf/.env
     depends_on:
       - influxdb
       - kapacitor
@@ -91,8 +117,6 @@ services:
           memory: 220M
     volumes:
       - chronograf_data:/var/lib/chronograf
-    env_file:
-      - ./chronograf/.env
     ports:
       - "8888:8888"
 
@@ -101,6 +125,7 @@ services:
     hostname: mysql
     env_file:
       - ./mysql/.env
+      - ./minio/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -118,17 +143,15 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
+    command: syslog://frontail:514
     ports:
       - "3306:3306"
 
   httpd:
     build: ./httpd
     hostname: httpd
+    env_file:
+      - ./minio/.env
     depends_on:
       - mysql
     deploy:
@@ -163,3 +186,4 @@ volumes:
   influxdb_data: {}
   kapacitor_data: {}
   chronograf_data: {}
+  minio_data: {}
