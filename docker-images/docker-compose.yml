@@ -171,11 +171,6 @@ services:
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
     ports:
       - "80:80"
 
