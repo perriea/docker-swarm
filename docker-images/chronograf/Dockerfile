@@ -1,5 +1,8 @@
 FROM alpine:3.6
 
+LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+
+ENV TIMEZONE Europe/Paris
 ENV CHRONOGRAF_VERSION 1.3.10.0
 
 RUN echo 'hosts: files dns' >> /etc/nsswitch.conf
