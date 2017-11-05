@@ -1,12 +1,6 @@
 version: '3'
 
 services:
-  registry:
-    image: registry:2
-    hostname: registry
-    ports:
-      - "5000:5000"
-
   wordpress:
     build: ./wordpress
     container_name: wordpress
@@ -50,10 +44,10 @@ services:
       - "8092:8092/udp"
       - "8086:8086"
       - "8083:8083"
-
-  grafana:
-    build: ./grafana
-    hostname: grafana
+  
+  kapacitor:
+    build: ./kapacitor
+    hostname: kapacitor
     depends_on:
       - influxdb
     deploy:
@@ -61,7 +55,7 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 3
+        max_attempts: 1
         window: 120s
       resources:
         limits:
@@ -71,10 +65,36 @@ services:
           cpus: '10.000'
           memory: 220M
     volumes:
-      - grafana_data:/grafana
-      - telegraf_data:/root/telegraf
+      - kapacitor_data:/var/lib/kapacitor
     ports:
-      - "3000:3000"
+      - "9092:9092"
+
+  chronograf:
+    build: ./chronograf
+    hostname: chronograf
+    depends_on:
+      - influxdb
+      - kapacitor
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+    volumes:
+      - chronograf_data:/var/lib/chronograf
+    env_file:
+      - ./chronograf/.env
+    ports:
+      - "8888:8888"
 
   mysql:
     build: ./mysql
@@ -141,4 +161,5 @@ volumes:
   wordpress_data: {}
   telegraf_data: {}
   influxdb_data: {}
-  grafana_data: {}
+  kapacitor_data: {}
+  chronograf_data: {}
