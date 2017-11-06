@@ -34,6 +34,10 @@ Soon !
 
 ![Mapping](https://img4.hostingpics.net/pics/537792dockerswarm.jpg)
 
+### Flux
+
+![Flux](https://img4.hostingpics.net/pics/871180flux.jpg)
+
 ### Commands
 
 Delete all containers (stoped, created or exited) :   
