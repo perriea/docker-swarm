@@ -1,6 +1,6 @@
 # Docker Swarm
 
-## Docker 
+## Docker
 
 ### Compose
 
@@ -32,11 +32,11 @@ Soon !
 
 ### Mapping
 
-![Mapping](https://img4.hostingpics.net/pics/537792dockerswarm.jpg)
+<img src="https://img4.hostingpics.net/pics/537792dockerswarm.jpg" alt="Mapping" style="width: 500px;"/>
 
 ### Flux
 
-![Flux](https://img4.hostingpics.net/pics/871180flux.jpg)
+<img src="https://img4.hostingpics.net/pics/410968flux.jpg" alt="Mapping" style="width: 500px;"/>
 
 ### Commands
 
