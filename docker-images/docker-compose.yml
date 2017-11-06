@@ -143,7 +143,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
-    command: syslog://frontail:514
     ports:
       - "3306:3306"
 
