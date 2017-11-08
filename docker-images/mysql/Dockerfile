@@ -4,17 +4,10 @@ LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
 ENV TIMEZONE Europe/Paris
 
-# Installing MySQL packages (MariaDB on alpine)
-RUN apk --update add --no-cache mysql mysql-client supervisor && \
-		addgroup mysql mysql
+# Installing packages (MariaDB & dependencies Fluentd)
+RUN apk add --update --no-cache mysql ruby ruby-irb supervisor
+RUN apk add --update --no-cache --virtual .build-deps build-base ruby-dev wget
 
-# Installing Fluentd & dependencies
-RUN apk add --no-cache ca-certificates \
-        ruby ruby-irb
-RUN apk add --no-cache --virtual .build-deps \
-        build-base \
-        ruby-dev wget gnupg && \ 
-        update-ca-certificates
 RUN echo 'gem: --no-document' >> /etc/gemrc && \ 
         gem install oj -v 2.18.3 && \
         gem install json -v 2.1.0 && \
@@ -22,10 +15,16 @@ RUN echo 'gem: --no-document' >> /etc/gemrc && \
         gem install fluent-plugin-s3 -v 1.0.0.rc2 && \
         apk del .build-deps
 
-RUN mkdir -p /fluentd/log /fluentd/plugins /var/log/td-agent /var/log/mysql
+RUN mkdir -p /fluentd/log \
+        /fluentd/plugins \
+        /var/log/td-agent \
+        /var/log/mysql \
+        /var/log/telegraf
 
 # Work path
 WORKDIR /scripts
+
+RUN addgroup mysql mysql
 
 # Copy of the MySQL startup script
 COPY ./scripts/start.sh ./start.sh
