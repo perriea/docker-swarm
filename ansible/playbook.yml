@@ -1,0 +1,8 @@
+---
+- hosts: test
+  roles: 
+    - docker_install
+    - swarm_init
+    - swarm_deploy
+  vars_files:
+    - client_info.yml

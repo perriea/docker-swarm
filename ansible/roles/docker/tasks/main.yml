@@ -1,0 +1,44 @@
+---
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - wget
+    - gnupg2
+    - software-properties-common
+  become: true
+ 
+- name: Debian add docker key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+  become: true
+  when: "ansible_distribution == 'Debian'"
+     
+- name: create repo line
+  command: bash -c "echo \"deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable\" "
+  register: docker_repo_line
+ 
+- debug: 
+    msg: "{{ docker_repo_line.stdout }}"
+ 
+- name: add docker repo
+  apt_repository:
+    repo: "{{ docker_repo_line.stdout }}"
+    state: present
+  become: true
+      
+- name: install docker ce
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  become: true
+
+- name: install docker-compose
+  command: wget -q https://github.com/docker/compose/releases/download/1.17.0/run.sh -O /usr/bin/docker-compose && chmod +x /usr/bin/docker-compose
+  become: true
+

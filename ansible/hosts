@@ -1,9 +1,5 @@
-[manager-swarm:children]
-node01
-
-[node-swarm:children]
-node02
-node03
+[test]
+172.16.60.167
 
 [node01]
 172.16.231.6 ansible_connection=ssh ansible_ssh_user=perrie_a

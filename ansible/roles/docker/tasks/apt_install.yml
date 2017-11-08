@@ -1,5 +1,0 @@
-- name: "Check required variables"
-  fail: msg="Variable '{{ docker_version }}' is not defined"
-  when: item not in vars
-  with_items: "{{required_vars}}"
-
