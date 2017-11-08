@@ -7,12 +7,11 @@ ENV TIMEZONE Europe/Paris
 WORKDIR /root
 
 # Updating alpine certificates (min wget)
-RUN apk add --update ca-certificates wget && \
-        update-ca-certificates
+RUN apk add --update --virtual .build-deps wget
 
 # Downloading packages
-RUN wget -O /usr/bin/minio https://dl.minio.io/server/minio/release/linux-amd64/minio
-RUN wget -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64
+RUN wget --no-check-certificate -q -O /usr/bin/minio https://dl.minio.io/server/minio/release/linux-amd64/minio
+RUN wget --no-check-certificate -q -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64
 COPY ./scripts/start.sh .
 
 # Updating rights
@@ -20,7 +19,8 @@ RUN chmod +x /usr/bin/minio && \
     chmod +x /usr/bin/gosu && \
     chmod +x start.sh && \
     addgroup minio && \
-    adduser -s /bin/false -G minio -S -D minio
+    adduser -s /bin/false -G minio -S -D minio && \
+    apk del .build-deps
 
 VOLUME [ "/data" ]
 

@@ -6,16 +6,17 @@ ENV TIMEZONE Europe/Paris
 ENV VERSION_WORDPRESS 4.8.3
 
 # Minimum package installation
-RUN apk --update add --no-cache wget unzip
+RUN apk add --update --no-cache --virtual .build-deps wget unzip
 
 # Work path
 WORKDIR /srv/app
 
 # Download & install wordpress
-RUN wget --no-check-certificate https://wordpress.org/wordpress-${VERSION_WORDPRESS}.zip
-RUN unzip /srv/app/wordpress-${VERSION_WORDPRESS}.zip -d /srv/app/ && \
+RUN wget --no-check-certificate -q -O wordpress-${VERSION_WORDPRESS}.zip https://wordpress.org/wordpress-${VERSION_WORDPRESS}.zip
+RUN unzip -q /srv/app/wordpress-${VERSION_WORDPRESS}.zip -d /srv/app/ && \
         rm /srv/app/wordpress-${VERSION_WORDPRESS}.zip && \
-        chmod -R +x /srv/app/wordpress
+        chmod -R +x /srv/app/wordpress && \
+        apk del .build-deps
 
 # Copy of the WordPress configuration file
 COPY ./files/wp-config.php /srv/app/wordpress
