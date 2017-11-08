@@ -6,16 +6,10 @@ ENV TIMEZONE Europe/Paris
 ENV INFLUXDB_VERSION 1.3.7
 
 # Installing packages
-RUN apk add --no-cache --virtual .build-deps wget gnupg tar ca-certificates && \
-        update-ca-certificates
+RUN apk add --no-cache --virtual .build-deps wget tar
 
-# Saving certificate
-RUN gpg --keyserver http://ha.pool.sks-keyservers.net --recv-keys 05CE15085FC09D18E99EFB22684A14CF2582E0C5
-    
 # Downloading binaries
-RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc && \
-        wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
-        gpg --batch --verify influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz
+RUN wget --no-check-certificate -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz
 
 # Installing binaries
 RUN mkdir -p /usr/src /etc/influxdb && \
