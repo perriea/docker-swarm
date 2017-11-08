@@ -23,5 +23,9 @@ echo "Clearing any old processes..."
 rm -f /run/apache2/apache2.pid
 rm -f /run/apache2/httpd.pid
 
-echo "Starting all process"
+echo "Changing values in fluentd ..."
+sed -i "s/aws_key_id AZERTY/aws_key_id $MINIO_ACCESS_KEY/" /root/config/fluentd.conf
+sed -i "s/aws_sec_key AZERTY/aws_sec_key $MINIO_SECRET_KEY/" /root/config/fluentd.conf
+
+echo "Starting all process ..."
 exec supervisord --nodaemon --configuration /root/config/supervisord.conf

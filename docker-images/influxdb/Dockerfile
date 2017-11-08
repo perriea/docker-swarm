@@ -2,17 +2,16 @@ FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
 
+ENV TIMEZONE Europe/Paris
 ENV INFLUXDB_VERSION 1.3.7
 
-RUN apk add --no-cache --virtual .build-deps wget gnupg tar ca-certificates && \
-        update-ca-certificates
+# Installing packages
+RUN apk add --no-cache --virtual .build-deps wget tar
 
-RUN gpg --keyserver http://ha.pool.sks-keyservers.net --recv-keys 05CE15085FC09D18E99EFB22684A14CF2582E0C5
-    
-RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc && \
-        wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
-        gpg --batch --verify influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz
-    
+# Downloading binaries
+RUN wget --no-check-certificate -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz
+
+# Installing binaries
 RUN mkdir -p /usr/src /etc/influxdb && \
         tar -C /usr/src -xzf influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
         rm -f /usr/src/influxdb-*/influxdb.conf && \

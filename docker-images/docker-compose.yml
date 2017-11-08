@@ -1,15 +1,33 @@
 version: '3'
 
 services:
-  registry:
-    image: registry:2
-    hostname: registry
+  minio:
+    build: ./minio
+    hostname: minio
+    env_file:
+      - ./minio/.env
+    volumes:
+      - minio_data:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '5.000'
+          memory: 100M
+        reservations:
+          cpus: '5.000'
+          memory: 50M
     ports:
-      - "5000:5000"
+      - "9000:9000"
 
   wordpress:
     build: ./wordpress
-    container_name: wordpress
+    hostname: wordpress
     env_file:
       - ./wordpress/.env
     volumes:
@@ -17,7 +35,7 @@ services:
 
   telegraf:
     build: ./telegraf
-    container_name: telegraf
+    hostname: telegraf
     env_file:
       - ./telegraf/.env
     volumes:
@@ -50,10 +68,10 @@ services:
       - "8092:8092/udp"
       - "8086:8086"
       - "8083:8083"
-
-  grafana:
-    build: ./grafana
-    hostname: grafana
+  
+  kapacitor:
+    build: ./kapacitor
+    hostname: kapacitor
     depends_on:
       - influxdb
     deploy:
@@ -61,7 +79,7 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 3
+        max_attempts: 1
         window: 120s
       resources:
         limits:
@@ -71,16 +89,43 @@ services:
           cpus: '10.000'
           memory: 220M
     volumes:
-      - grafana_data:/grafana
-      - telegraf_data:/root/telegraf
+      - kapacitor_data:/var/lib/kapacitor
     ports:
-      - "3000:3000"
+      - "9092:9092"
+
+  chronograf:
+    build: ./chronograf
+    hostname: chronograf
+    env_file:
+      - ./chronograf/.env
+    depends_on:
+      - influxdb
+      - kapacitor
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 250M
+        reservations:
+          cpus: '10.000'
+          memory: 220M
+    volumes:
+      - chronograf_data:/var/lib/chronograf
+    ports:
+      - "8888:8888"
 
   mysql:
     build: ./mysql
     hostname: mysql
     env_file:
       - ./mysql/.env
+      - ./minio/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -98,17 +143,14 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
     ports:
       - "3306:3306"
 
   httpd:
     build: ./httpd
     hostname: httpd
+    env_file:
+      - ./minio/.env
     depends_on:
       - mysql
     deploy:
@@ -128,11 +170,6 @@ services:
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf
-    logging:
-      driver: "json-file"
-      options:
-          max-size: 50m
-          max-file: "5"
     ports:
       - "80:80"
 
@@ -141,4 +178,6 @@ volumes:
   wordpress_data: {}
   telegraf_data: {}
   influxdb_data: {}
-  grafana_data: {}
+  kapacitor_data: {}
+  chronograf_data: {}
+  minio_data: {}

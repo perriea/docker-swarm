@@ -1,0 +1,4 @@
+---
+- name: my command
+  command: echo stuff
+  when: "if 'databaseservers' in {{ group_names }}"    
