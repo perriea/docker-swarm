@@ -32,7 +32,7 @@ services:
     hostname: wordpress
     env_file:
       - ./wordpress/.env
-    resources:
+    deploy:
       placement:
         constraints:
           - node.hostname == vm029
@@ -44,11 +44,11 @@ services:
     hostname: telegraf
     env_file:
       - ./telegraf/.env
-      resources:
-        placement:
-          constraints:
-            - node.hostname == vm018
-            - node.hostname == vm029
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == vm018
+          - node.hostname == vm029
     volumes:
       - telegraf_data:/srv/app/telegraf
   
@@ -100,9 +100,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
-        placement:
-          constraints:
-            - node.hostname == vm006
+      placement:
+        constraints:
+          - node.hostname == vm006
     volumes:
       - kapacitor_data:/var/lib/kapacitor
     ports:
@@ -129,9 +129,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
-        placement:
-          constraints:
-            - node.hostname == vm006
+      placement:
+        constraints:
+          - node.hostname == vm006
     volumes:
       - chronograf_data:/var/lib/chronograf
     ports:
@@ -157,9 +157,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 256M
-        placement:
-          constraints:
-            - node.hostname == vm018
+      placement:
+        constraints:
+          - node.hostname == vm018
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
@@ -186,9 +186,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
-        placement:
-          constraints:
-            - node.hostname == vm029
+      placement:
+        constraints:
+          - node.hostname == vm029
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf
