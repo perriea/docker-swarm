@@ -3,7 +3,6 @@ version: '3'
 services:
   minio:
     image: 172.16.231.6:5000/minio:0.1
-    build: ./minio
     hostname: minio
     env_file:
       - ./minio/.env
@@ -22,30 +21,39 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
+      placement:
+        constraints:
+          - node.hostname == vm006
     ports:
       - "9000:9000"
 
   wordpress:
     image: 172.16.231.6:5000/wordpress:0.1
-    build: ./wordpress
     hostname: wordpress
     env_file:
       - ./wordpress/.env
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == vm029
     volumes:
       - wordpress_data:/srv/app/wordpress
 
   telegraf:
     image: 172.16.231.6:5000/telegraf:0.1
-    build: ./telegraf
     hostname: telegraf
     env_file:
       - ./telegraf/.env
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == vm018
+          - node.hostname == vm029
     volumes:
       - telegraf_data:/srv/app/telegraf
   
   influxdb:
     image: 172.16.231.6:5000/influxdb:0.1
-    build: ./influxdb
     hostname: influxdb
     env_file:
       - ./influxdb/.env
@@ -62,6 +70,9 @@ services:
         reservations:
           cpus: '10.000'
           memory: 256M
+      placement:
+        constraints:
+          - node.hostname == vm006
     volumes:
       - influxdb_data:/var/lib/influxdb
       - telegraf_data:/root/telegraf
@@ -73,7 +84,6 @@ services:
   
   kapacitor:
     image: 172.16.231.6:5000/kapacitor:0.1
-    build: ./kapacitor
     hostname: kapacitor
     depends_on:
       - influxdb
@@ -90,6 +100,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
+      placement:
+        constraints:
+          - node.hostname == vm006
     volumes:
       - kapacitor_data:/var/lib/kapacitor
     ports:
@@ -97,7 +110,6 @@ services:
 
   chronograf:
     image: 172.16.231.6:5000/chronograf:0.1
-    build: ./chronograf
     hostname: chronograf
     env_file:
       - ./chronograf/.env
@@ -117,6 +129,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
+      placement:
+        constraints:
+          - node.hostname == vm006
     volumes:
       - chronograf_data:/var/lib/chronograf
     ports:
@@ -124,7 +139,6 @@ services:
 
   mysql:
     image: 172.16.231.6:5000/mysql:0.1
-    build: ./mysql
     hostname: mysql
     env_file:
       - ./mysql/.env
@@ -143,6 +157,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 256M
+      placement:
+        constraints:
+          - node.hostname == vm018
     volumes:
       - db_data:/var/lib/mysql
       - telegraf_data:/root/telegraf
@@ -151,7 +168,6 @@ services:
 
   httpd:
     image: 172.16.231.6:5000/httpd:0.1
-    build: ./httpd
     hostname: httpd
     env_file:
       - ./minio/.env
@@ -170,6 +186,9 @@ services:
         reservations:
           cpus: '5.000'
           memory: 128M
+      placement:
+        constraints:
+          - node.hostname == vm029
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
       - telegraf_data:/root/telegraf

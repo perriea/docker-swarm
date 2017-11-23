@@ -14,7 +14,6 @@ RUN wget --no-check-certificate -q https://dl.influxdata.com/influxdb/releases/i
 # Installing binaries
 RUN mkdir -p /usr/src /etc/influxdb && \
         tar -C /usr/src -xzf influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
-        rm -f /usr/src/influxdb-*/influxdb.conf && \
         chmod +x /usr/src/influxdb-*/* && \
         cp -a /usr/src/influxdb-*/* /usr/bin/ && \
         rm -rf *.tar.gz* /usr/src /root/.gnupg && \
@@ -24,6 +23,6 @@ COPY ./files/influxdb.conf /etc/influxdb
 
 VOLUME [ "/var/lib/influxdb" ]
 
-EXPOSE 8125/udp 8092/udp 8086 8083
+EXPOSE 8086 
 
-ENTRYPOINT [ "influxd" ]
+ENTRYPOINT [ "influxd", "-config", "/etc/influxdb/influxdb.conf" ]
