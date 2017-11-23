@@ -35,6 +35,9 @@ services:
       - ./wordpress/.env
     volumes:
       - wordpress_data:/srv/app/wordpress
+    deploy:
+      placement:
+        constraints: [node.type == httpd]
 
   telegraf:
     image: 172.16.231.6:5000/telegraf:0.1
