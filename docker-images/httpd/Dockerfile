@@ -14,8 +14,7 @@ RUN apk --update add --no-cache apache2 \
         php7-mcrypt \
         php7-session \
         php7-mysqli \
-        php7-zlib \
-        mysql-client
+        php7-zlib
 
 # Installing dependencies
 RUN apk add --no-cache --virtual .build-deps wget
