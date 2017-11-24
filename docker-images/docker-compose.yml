@@ -48,6 +48,11 @@ services:
         limits:
           cpus: '10.000'
           memory: 512M
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: kibana.access
     ports:
       - "5601:5601"
   
@@ -67,6 +72,11 @@ services:
         limits:
           cpus: '10.000'
           memory: 512M
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: elasticsearch.access
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -81,6 +91,11 @@ services:
       - influxdb
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: telegraf.access
 
   minio:
     image: myregistry:5000/minio:0.1
@@ -102,6 +117,11 @@ services:
         limits:
           cpus: '5.000'
           memory: 256M
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: minio.access
     ports:
       - "9000:9000"
 
@@ -132,6 +152,11 @@ services:
           memory: 512M
     volumes:
       - influxdb_data:/var/lib/influxdb
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: influxdb.access
     ports:
       - "8125:8125/udp"
       - "8092:8092/udp"
@@ -156,6 +181,11 @@ services:
           memory: 256M
     volumes:
       - kapacitor_data:/var/lib/kapacitor
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: kapacitor.access
     ports:
       - "9092:9092"
 
@@ -180,6 +210,11 @@ services:
           memory: 256M
     volumes:
       - chronograf_data:/var/lib/chronograf
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: chronograf.access
     ports:
       - "8888:8888"
 
@@ -202,6 +237,11 @@ services:
           memory: 512M
     volumes:
       - db_data:/var/lib/mysql
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: mysql.access
     ports:
       - "3306:3306"
 
@@ -225,6 +265,11 @@ services:
           memory: 256M
     volumes:
       - wordpress_data:/var/www/localhost/htdocs
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: httpd.access
     ports:
       - "80:80"
 
