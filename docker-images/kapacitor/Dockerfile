@@ -27,4 +27,4 @@ EXPOSE 9092
 
 VOLUME /var/lib/kapacitor
 
-ENTRYPOINT ["kapacitord", "-config", "/root/config/kapacitor.conf", "-pidfile", "/root/kapicitor.pid", "-log-file", "/var/log/kapicitor/kapacitor.log"]
+ENTRYPOINT ["kapacitord", "-config", "/root/config/kapacitor.conf", "-pidfile", "/root/kapicitor.pid"]

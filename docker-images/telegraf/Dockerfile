@@ -9,16 +9,20 @@ ENV INFLUXDB_HOST influxdb
 # Installing dependencies
 RUN apk --update add --no-cache --virtual .build-deps wget tar
 
+WORKDIR /root
+
 # Installing binaries
 RUN wget --no-check-certificate -q https://dl.influxdata.com/telegraf/releases/telegraf-${TELEGRAF_VERSION}-static_linux_amd64.tar.gz
 
 RUN mkdir -p /srv/app && \
-        tar -C /srv/app -xzf telegraf-${TELEGRAF_VERSION}-static_linux_amd64.tar.gz && \
-        chmod +x /srv/app/telegraf/* && \
-        rm /srv/app/telegraf/telegraf.conf && \
+        tar -C . -xzf telegraf-${TELEGRAF_VERSION}-static_linux_amd64.tar.gz && \
+        chmod +x telegraf/* && \
+        rm telegraf/telegraf.conf && \
         rm -rf *.tar.gz* /root/.gnupg && \
         apk del .build-deps
 
-RUN mkdir -p /srv/app/telegraf/telegraf.d
+COPY ./files/telegraf.conf telegraf.conf
 
-VOLUME ["/srv/app/"]
+COPY ./scripts/start.sh start.sh
+
+ENTRYPOINT [ "./start.sh" ]
