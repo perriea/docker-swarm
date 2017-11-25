@@ -33,6 +33,8 @@ COPY ./scripts/start.sh /
 
 WORKDIR /usr/share/kibana
 
+VOLUME [ "/usr/share/kibana" ]
+
 EXPOSE 5601
 
 ENTRYPOINT ["/start.sh"]
