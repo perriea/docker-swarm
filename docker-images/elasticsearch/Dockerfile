@@ -1,7 +1,12 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="elasticsearch"
+LABEL APP_VERSION="6.0.0"
+LABEL APP_REPOSITORY="https://github.com/elastic/elasticsearch/releases"
+LABEL APP_DESCRIPTION="logging"
 
+ENV TIMEZONE Europe/Paris
 ENV VERSION 6.0.0
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 

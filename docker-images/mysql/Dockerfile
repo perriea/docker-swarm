@@ -1,6 +1,10 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="mariadb"
+LABEL APP_VERSION="10.1.28-r1"
+LABEL APP_REPOSITORY="https://pkgs.alpinelinux.org/package/edge/main/aarch64/mysql"
+LABEL APP_DESCRIPTION="app"
 
 ENV TIMEZONE Europe/Paris
 

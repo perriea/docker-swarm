@@ -1,6 +1,10 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="httpd"
+LABEL APP_VERSION="2.4.29-r1"
+LABEL APP_REPOSITORY="https://pkgs.alpinelinux.org/package/edge/main/aarch64/apache2"
+LABEL APP_DESCRIPTION="app"
 
 ENV TIMEZONE Europe/Paris
 

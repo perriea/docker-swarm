@@ -1,10 +1,13 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="telegraf"
+LABEL APP_VERSION="1.4.3"
+LABEL APP_REPOSITORY="https://github.com/influxdata/telegraf/releases"
+LABEL APP_DESCRIPTION="logging"
 
 ENV TIMEZONE Europe/Paris
-ENV TELEGRAF_VERSION 1.4.3
-ENV INFLUXDB_HOST influxdb
+ENV TELEGRAF_VERSION 1.4.4
 
 # Installing dependencies
 RUN apk --update add --no-cache --virtual .build-deps wget tar

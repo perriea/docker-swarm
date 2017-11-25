@@ -1,6 +1,13 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="fluentd"
+LABEL APP_VERSION="0.14.23"
+LABEL APP_REPOSITORY="https://github.com/fluent/fluentd/releases"
+LABEL APP_DESCRIPTION="logging"
+
+ENV TIMEZONE Europe/Paris
+ENV FLUENTD_VERSION 0.14.23
 
 # Installing dependencies
 RUN apk --update add --no-cache ruby ruby-irb
@@ -17,7 +24,7 @@ WORKDIR /root
 RUN echo 'gem: --no-document' >> /etc/gemrc && \ 
         gem install oj -v 2.18.3 && \
         gem install json -v 2.1.0 && \
-        gem install fluentd -v 0.14.22 && \
+        gem install fluentd -v ${FLUENTD_VERSION} && \
         gem install fluent-plugin-s3 && \
         gem install fluent-plugin-elasticsearch && \
         apk del .build-deps
