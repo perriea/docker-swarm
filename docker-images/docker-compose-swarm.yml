@@ -19,8 +19,9 @@ services:
           memory: 256M
       placement:
         constraints:
-          - node.role == manager
-          - node.role == worker
+          - node.hostname == vm006
+          - node.hostname == vm018
+          - node.hostname == vm029
     networks:
       - network_app
       - network_log
@@ -46,8 +47,9 @@ services:
           memory: 256M
       placement:
         constraints:
-          - node.role == manager
-          - node.role == worker
+          - node.hostname == vm006
+          - node.hostname == vm018
+          - node.hostname == vm029
     networks:
       - network_app
       - network_log
@@ -130,6 +132,21 @@ services:
       - fluentd
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '10.000'
+          memory: 256M
+      placement:
+        constraints:
+          - node.hostname == vm006
+          - node.hostname == vm018
+          - node.hostname == vm029
     logging:
       driver: "fluentd"
       options:
