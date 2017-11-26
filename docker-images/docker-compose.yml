@@ -17,6 +17,9 @@ services:
         limits:
           cpus: '5.000'
           memory: 256M
+    networks:
+      - network_app
+      - network_log
     ports:
       - 5000:5000
   
@@ -27,6 +30,9 @@ services:
     env_file:
       - ./fluentd/.env
       - ./minio/.env
+    networks:
+      - network_app
+      - network_log
     ports:
       - "24224:24224"
       - "24224:24224/udp"
@@ -35,6 +41,8 @@ services:
     image: myregistry:5000/elasticsearch:0.1
     build: ./elasticsearch
     hostname: elasticsearch
+    depends_on:
+      - fluentd
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     deploy:
@@ -51,7 +59,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: elasticsearch.access
+        tag: log.elasticsearch
+    networks:
+      - network_log
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -79,7 +89,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: kibana.access
+        tag: log.kibana
+    networks:
+      - network_log
     ports:
       - "5601:5601"
 
@@ -91,13 +103,17 @@ services:
       - ./telegraf/.env
     depends_on:
       - influxdb
+      - fluentd
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     logging:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: telegraf.access
+        tag: monitoring.telegraf
+    networks:
+      - network_app
+      - network_log
 
   minio:
     image: myregistry:5000/minio:0.1
@@ -123,7 +139,10 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: minio.access
+        tag: storage.minio
+    networks:
+      - network_app
+      - network_log
     ports:
       - "9000:9000"
 
@@ -142,6 +161,8 @@ services:
     hostname: influxdb
     env_file:
       - ./influxdb/.env
+    depends_on:
+      - fluentd
     deploy:
       restart_policy:
         condition: on-failure
@@ -158,7 +179,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: influxdb.access
+        tag: monitoring.influxdb
+    networks:
+      - network_log
     ports:
       - "8125:8125/udp"
       - "8092:8092/udp"
@@ -171,6 +194,7 @@ services:
     hostname: kapacitor
     depends_on:
       - influxdb
+      - fluentd
     deploy:
       restart_policy:
         condition: on-failure
@@ -187,7 +211,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: kapacitor.access
+        tag: monitoring.kapacitor
+    networks:
+      - network_log
     ports:
       - "9092:9092"
 
@@ -200,6 +226,7 @@ services:
     depends_on:
       - influxdb
       - kapacitor
+      - fluentd
     deploy:
       restart_policy:
         condition: on-failure
@@ -216,7 +243,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: chronograf.access
+        tag: monitoring.chronograf
+    networks:
+      - network_log
     ports:
       - "8888:8888"
 
@@ -226,6 +255,8 @@ services:
     hostname: mysql
     env_file:
       - ./mysql/.env
+    depends_on:
+      - fluentd
     deploy:
       replicas: 1
       restart_policy:
@@ -243,7 +274,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: mysql.access
+        tag: app.mysql
+    networks:
+      - network_app
     ports:
       - "3306:3306"
 
@@ -255,6 +288,7 @@ services:
       - ./httpd/.env
     depends_on:
       - mysql
+      - fluentd
     deploy:
       restart_policy:
         condition: on-failure
@@ -271,9 +305,15 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        tag: httpd.access
+        tag: app.httpd
+    networks:
+      - network_app
     ports:
       - "80:80"
+
+networks:
+  network_app: {}
+  network_log: {}
 
 volumes:
   registry_data: {}
