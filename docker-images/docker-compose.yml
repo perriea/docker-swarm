@@ -101,6 +101,7 @@ services:
     hostname: telegraf
     env_file:
       - ./telegraf/.env
+      - ./mysql/.env
     depends_on:
       - influxdb
       - fluentd
