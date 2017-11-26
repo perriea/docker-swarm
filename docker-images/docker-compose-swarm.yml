@@ -17,6 +17,10 @@ services:
         limits:
           cpus: '5.000'
           memory: 256M
+      placement:
+        constraints:
+          - node.role == manager
+          - node.role == worker
     networks:
       - network_app
       - network_log
@@ -24,12 +28,26 @@ services:
       - 5000:5000
   
   fluentd:
-    image: myregistry:5000/fluentd:0.1
+    image: localhost:5000/fluentd:0.1
     build: ./fluentd
     hostname: fluentd
     env_file:
       - ./fluentd/.env
       - ./minio/.env
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 120s
+      resources:
+        limits:
+          cpus: '20.000'
+          memory: 256M
+      placement:
+        constraints:
+          - node.role == manager
+          - node.role == worker
     networks:
       - network_app
       - network_log
@@ -38,7 +56,7 @@ services:
       - "24224:24224/udp"
   
   elasticsearch:
-    image: myregistry:5000/elasticsearch:0.1
+    image: localhost:5000/elasticsearch:0.1
     build: ./elasticsearch
     hostname: elasticsearch
     depends_on:
@@ -70,7 +88,7 @@ services:
       - "9300:9300"
 
   kibana:
-    image: myregistry:5000/kibana:0.1
+    image: localhost:5000/kibana:0.1
     build: ./kibana
     hostname: kibana
     depends_on:
@@ -102,7 +120,7 @@ services:
       - "5601:5601"
 
   telegraf:
-    image: myregistry:5000/telegraf:0.1
+    image: localhost:5000/telegraf:0.1
     build: ./telegraf
     hostname: telegraf
     env_file:
@@ -122,7 +140,7 @@ services:
       - network_log
 
   minio:
-    image: myregistry:5000/minio:0.1
+    image: localhost:5000/minio:0.1
     build: ./minio
     hostname: minio
     depends_on:
@@ -156,7 +174,7 @@ services:
       - "9000:9000"
 
   wordpress:
-    image: myregistry:5000/wordpress:0.1
+    image: localhost:5000/wordpress:0.1
     build: ./wordpress
     hostname: wordpress
     env_file:
@@ -169,7 +187,7 @@ services:
           - node.hostname == vm029
   
   influxdb:
-    image: myregistry:5000/influxdb:0.1
+    image: localhost:5000/influxdb:0.1
     build: ./influxdb
     hostname: influxdb
     env_file:
@@ -205,7 +223,7 @@ services:
       - "8083:8083"
   
   kapacitor:
-    image: myregistry:5000/kapacitor:0.1
+    image: localhost:5000/kapacitor:0.1
     build: ./kapacitor
     hostname: kapacitor
     depends_on:
@@ -237,7 +255,7 @@ services:
       - "9092:9092"
 
   chronograf:
-    image: myregistry:5000/chronograf:0.1
+    image: localhost:5000/chronograf:0.1
     build: ./chronograf
     hostname: chronograf
     env_file:
@@ -272,7 +290,7 @@ services:
       - "8888:8888"
 
   mysql:
-    image: myregistry:5000/mysql:0.1
+    image: localhost:5000/mysql:0.1
     build: ./mysql
     hostname: mysql
     env_file:
@@ -306,7 +324,7 @@ services:
       - "3306:3306"
 
   httpd:
-    image: myregistry:5000/httpd:0.1
+    image: localhost:5000/httpd:0.1
     build: ./httpd
     hostname: httpd
     env_file:
