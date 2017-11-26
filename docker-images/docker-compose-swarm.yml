@@ -35,6 +35,8 @@ services:
     env_file:
       - ./fluentd/.env
       - ./minio/.env
+    depends_on:
+      - registry
     deploy:
       restart_policy:
         condition: on-failure
@@ -62,6 +64,7 @@ services:
     build: ./elasticsearch
     hostname: elasticsearch
     depends_on:
+      - registry
       - fluentd
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
@@ -94,8 +97,9 @@ services:
     build: ./kibana
     hostname: kibana
     depends_on:
-      - elasticsearch
+      - registry
       - fluentd
+      - elasticsearch
     volumes:
       - kibana_data:/usr/share/kibana
     deploy:
@@ -128,8 +132,9 @@ services:
     env_file:
       - ./telegraf/.env
     depends_on:
-      - influxdb
+      - registry
       - fluentd
+      - influxdb
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
@@ -161,6 +166,7 @@ services:
     build: ./minio
     hostname: minio
     depends_on:
+      - registry
       - fluentd
     env_file:
       - ./minio/.env
@@ -194,6 +200,8 @@ services:
     image: localhost:5000/wordpress:0.1
     build: ./wordpress
     hostname: wordpress
+    depends_on:
+      - registry
     env_file:
       - ./wordpress/.env
     volumes:
@@ -210,6 +218,7 @@ services:
     env_file:
       - ./influxdb/.env
     depends_on:
+      - registry
       - fluentd
     deploy:
       restart_policy:
@@ -244,8 +253,9 @@ services:
     build: ./kapacitor
     hostname: kapacitor
     depends_on:
-      - influxdb
+      - registry
       - fluentd
+      - influxdb
     deploy:
       restart_policy:
         condition: on-failure
@@ -278,9 +288,10 @@ services:
     env_file:
       - ./chronograf/.env
     depends_on:
+      - registry
+      - fluentd
       - influxdb
       - kapacitor
-      - fluentd
     deploy:
       restart_policy:
         condition: on-failure
@@ -313,6 +324,7 @@ services:
     env_file:
       - ./mysql/.env
     depends_on:
+      - registry
       - fluentd
     deploy:
       replicas: 1
@@ -347,8 +359,9 @@ services:
     env_file:
       - ./httpd/.env
     depends_on:
-      - mysql
+      - registry
       - fluentd
+      - mysql
     deploy:
       restart_policy:
         condition: on-failure
