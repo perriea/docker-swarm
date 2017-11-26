@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  registry:
+  myregistry:
     image: registry:2
     hostname: myregistry
     restart: always
@@ -25,14 +25,14 @@ services:
       - 5000:5000
   
   fluentd:
-    image: localhost:5000/fluentd:0.1
+    image: myregistry:5000/fluentd:0.1
     build: ./fluentd
     hostname: fluentd
     env_file:
       - ./fluentd/.env
       - ./minio/.env
     depends_on:
-      - registry
+      - myregistry
     deploy:
       mode: global
       restart_policy:
@@ -52,11 +52,11 @@ services:
       - "24224:24224/udp"
   
   elasticsearch:
-    image: localhost:5000/elasticsearch:0.1
+    image: myregistry:5000/elasticsearch:0.1
     build: ./elasticsearch
     hostname: elasticsearch
     depends_on:
-      - registry
+      - myregistry
       - fluentd
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
@@ -85,11 +85,11 @@ services:
       - "9300:9300"
 
   kibana:
-    image: localhost:5000/kibana:0.1
+    image: myregistry:5000/kibana:0.1
     build: ./kibana
     hostname: kibana
     depends_on:
-      - registry
+      - myregistry
       - fluentd
       - elasticsearch
     volumes:
@@ -118,13 +118,13 @@ services:
       - "5601:5601"
 
   telegraf:
-    image: localhost:5000/telegraf:0.1
+    image: myregistry:5000/telegraf:0.1
     build: ./telegraf
     hostname: telegraf
     env_file:
       - ./telegraf/.env
     depends_on:
-      - registry
+      - myregistry
       - fluentd
       - influxdb
     volumes:
@@ -150,11 +150,11 @@ services:
       - network_log
 
   minio:
-    image: localhost:5000/minio:0.1
+    image: myregistry:5000/minio:0.1
     build: ./minio
     hostname: minio
     depends_on:
-      - registry
+      - myregistry
       - fluentd
     env_file:
       - ./minio/.env
@@ -185,11 +185,11 @@ services:
       - "9000:9000"
 
   wordpress:
-    image: localhost:5000/wordpress:0.1
+    image: myregistry:5000/wordpress:0.1
     build: ./wordpress
     hostname: wordpress
     depends_on:
-      - registry
+      - myregistry
     env_file:
       - ./wordpress/.env
     volumes:
@@ -200,13 +200,13 @@ services:
           - node.hostname == vm029
   
   influxdb:
-    image: localhost:5000/influxdb:0.1
+    image: myregistry:5000/influxdb:0.1
     build: ./influxdb
     hostname: influxdb
     env_file:
       - ./influxdb/.env
     depends_on:
-      - registry
+      - myregistry
       - fluentd
     deploy:
       restart_policy:
@@ -237,11 +237,11 @@ services:
       - "8083:8083"
   
   kapacitor:
-    image: localhost:5000/kapacitor:0.1
+    image: myregistry:5000/kapacitor:0.1
     build: ./kapacitor
     hostname: kapacitor
     depends_on:
-      - registry
+      - myregistry
       - fluentd
       - influxdb
     deploy:
@@ -270,13 +270,13 @@ services:
       - "9092:9092"
 
   chronograf:
-    image: localhost:5000/chronograf:0.1
+    image: myregistry:5000/chronograf:0.1
     build: ./chronograf
     hostname: chronograf
     env_file:
       - ./chronograf/.env
     depends_on:
-      - registry
+      - myregistry
       - fluentd
       - influxdb
       - kapacitor
@@ -306,13 +306,13 @@ services:
       - "8888:8888"
 
   mysql:
-    image: localhost:5000/mysql:0.1
+    image: myregistry:5000/mysql:0.1
     build: ./mysql
     hostname: mysql
     env_file:
       - ./mysql/.env
     depends_on:
-      - registry
+      - myregistry
       - fluentd
     deploy:
       replicas: 1
@@ -341,13 +341,13 @@ services:
       - "3306:3306"
 
   httpd:
-    image: localhost:5000/httpd:0.1
+    image: myregistry:5000/httpd:0.1
     build: ./httpd
     hostname: httpd
     env_file:
       - ./httpd/.env
     depends_on:
-      - registry
+      - myregistry
       - fluentd
       - mysql
     deploy:
