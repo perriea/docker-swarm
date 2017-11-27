@@ -10,6 +10,9 @@ Build :
 Start :   
 `docker-compose up -d`   
 
+Status :   
+`docker-compose ps`
+
 Stop :   
 `docker-compose stop`   
 
@@ -19,24 +22,36 @@ Delete :
 
 ### Swarm
 
-Soon !   
+Launch :   
+`docker stack deploy -c docker-compose-swar.yml hive`   
 
-### Applications
+Status :   
+`docker service ls`
 
-- HTTPD : `80/tcp` (HTTP) : Wordpress 4   
-- MYSQL : `3306/tcp` (access via user `wordpress`) : Database Wordpress   
-- InfluxDB : `8125/udp, 8092/udp, 8086/tcp 8083/tcp` (8086 HTTP WebAPI) : Data Monitoring   
-- Chronograf : `8888/tcp` (HTTP, API + interface) : Monitoring    
-- Kapacitor : `9092/tcp` (HTTP WebAPI) : Alerting   
-- Minio : `9000/tcp` (HTTP, API + interface) : Logs   
+Delete :   
+`docker stack rm hive`   
+
+### Services
+
+- Registry `5000/tcp` (HTTP API) : Private Registry Docker,   
+- HTTPD `80/tcp` (HTTP) : Wordpress 4,   
+- MySQL `3306/tcp` (access via user `wordpress`) : MariaDB Database Wordpress,   
+- Telegraf : Transmitter of Docker metrics & machine (InfluxData),   
+- InfluxDB `8125/udp, 8092/udp, 8086/tcp 8083/tcp` (HTTP WebAPI + Binaries interface) : Database Monitoring (InfluxData),   
+- Chronograf `8888/tcp` (HTTP API + interface) : Monitoring Interface (InfluxData),   
+- Kapacitor `9092/tcp` (HTTP API) : Alerting (InfluxData),   
+- ElasticSearch : `9200/tcp 9300/tcp` (HTTP API + Binary interface) : Indexing infrastructure logs,   
+- Fluentd `24224/tcp, 24224/udp` : Unified Logging Layer,
+- Kibana `5601/tcp` (HTTP interface) : Kibana analytics and search dashboard for Elasticsearch,
+- Minio `9000/tcp` (WebRPC Golang + interface) : Logs Storage (type AWS S3).   
 
 ### Mapping
 
-<img src="https://img4.hostingpics.net/pics/537792dockerswarm.jpg" alt="Mapping" style="width: 500px;"/>
+<img src="https://raw.githubusercontent.com/perriea/docker-swarm/swarm/draw.io/docker-swarm.jpg" alt="Mapping" style="width: 500px;"/>
 
 ### Flux
 
-<img src="https://img4.hostingpics.net/pics/410968flux.jpg" alt="Mapping" style="width: 500px;"/>
+<img src="https://raw.githubusercontent.com/perriea/docker-swarm/swarm/draw.io/flux.jpg" alt="Mapping" style="width: 500px;"/>
 
 ### Commands
 
