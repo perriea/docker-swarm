@@ -195,6 +195,8 @@ services:
     volumes:
       - wordpress_data:/srv/app/wordpress
     deploy:
+      restart_policy:
+        condition: none
       placement:
         constraints:
           - node.hostname == vm029

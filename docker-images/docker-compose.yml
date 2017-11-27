@@ -155,6 +155,9 @@ services:
       - ./wordpress/.env
     volumes:
       - wordpress_data:/srv/app/wordpress
+    deploy:
+      restart_policy:
+        condition: none
   
   influxdb:
     image: localhost:5000/influxdb:0.1
