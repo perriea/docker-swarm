@@ -69,10 +69,10 @@ services:
       resources:
         limits:
           cpus: '10.000'
-          memory: 512M
+          memory: 768M
       placement:
         constraints:
-          - node.hostname == vm029
+          - node.hostname == vm006
     logging:
       driver: "fluentd"
       options:
