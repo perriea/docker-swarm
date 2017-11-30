@@ -1,6 +1,10 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="kapacitor"
+LABEL APP_VERSION="1.3.3"
+LABEL APP_REPOSITORY="https://github.com/influxdata/kapacitor/releases"
+LABEL APP_DESCRIPTION="alerting"
 
 ENV TIMEZONE Europe/Paris
 ENV KAPACITOR_VERSION 1.3.3

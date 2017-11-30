@@ -1,6 +1,10 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="influxdb"
+LABEL APP_VERSION="1.3.7"
+LABEL APP_REPOSITORY="https://github.com/influxdata/influxdb/releases"
+LABEL APP_DESCRIPTION="logging"
 
 ENV TIMEZONE Europe/Paris
 ENV INFLUXDB_VERSION 1.3.7

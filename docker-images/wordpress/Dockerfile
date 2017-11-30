@@ -1,9 +1,13 @@
 FROM alpine:3.6
 
 LABEL MAINTAINER="Aurelien PERRIER <perrie_a@etna-alternance.net>"
+LABEL APP="wordpress"
+LABEL APP_VERSION="4.8.3"
+LABEL APP_REPOSITORY="https://github.com/WordPress/WordPress/releases"
+LABEL APP_DESCRIPTION="app"
 
 ENV TIMEZONE Europe/Paris
-ENV VERSION_WORDPRESS 4.8.3
+ENV VERSION_WORDPRESS 4.9
 
 # Minimum package installation
 RUN apk add --update --no-cache --virtual .build-deps wget unzip
